@@ -1,5 +1,5 @@
 const Terrain = require('../models/terrain.model');
-
+const Reservation = require('../models/reservation.model')
     
 module.exports = {
     create: async (req,res)=>{
@@ -11,19 +11,28 @@ module.exports = {
     } ,
     delete: async (req,res)=>{
         const { _id } = req.params;
-        const terrain = await Terrain.findOneAndDelete({ _id });
-        if(terrain){
-            return res.json("deleted")
+        const terrain = await Terrain.findOne({ _id });
+        if(!terrain){
+            return res.status(404).json("Terrain introuvable")
         }
-        return res.json("erreur");
+        const reservations = await Reservation.find({ terrain })
+        if(reservations.length != 0){
+            for(let i=0; i<reservations.length; i++){
+                await Reservation.remove({ _id : reservations[i]._id })
+            }
+        }
+        await Terrain.remove({ _id });
+        return res.json("Terrain supprimer avec succès");
     },
     update: async (req,res)=>{
         const { _id } = req.params;
-        // const terrain = await Terrain.findOneAndDelete({ _id });
-        // if(terrain){
-        //     return res.json("deleted")
-        // }
-        return res.json("erreur " + _id);
+        const terrain = await Terrain.findOne({ _id });
+        const { name, address } = req.body;
+        terrain.name=  name;
+        terrain.address=  address;
+         
+        await terrain.save();
+        return res.json(terrain);
     },
     getAll: async (req,res)=>{
         const user= req.user;
