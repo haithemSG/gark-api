@@ -17,6 +17,7 @@ router.route('/:_id')
     .delete(passportJwt , reservationController.delete)
     .put(passportJwt , reservationController.update)
     .get(passportJwt , reservationController.getOne)
+    .patch(reservationController.getTerrainReservations)
 
 router.route('/generate/stats')
     .get(passportJwt, reservationController.generateStats)

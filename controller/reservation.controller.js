@@ -127,5 +127,10 @@ module.exports = {
 
         res.json({ dataToday, dataWeek, dataMonth })
 
+    },
+    getTerrainReservations : async(req,res,next)=>{
+        const { _id } = req.params;
+        const reservations = await Reservation.find({ terrain:  _id  }).populate('terrain');
+        res.json({ reservations })
     }
 }
