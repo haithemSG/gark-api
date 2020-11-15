@@ -62,9 +62,14 @@ module.exports = {
         var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
         var last = first + 6; // last day is the first day + 6
 
+        console.log(first)
+        console.log(last)
 
         var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
         var lastday = new Date(curr.setDate(last+1)).setHours(23,59,59,999);
+
+        console.log(new Date(firstday), new Date(lastday));
+
 
         const reservations = await Reservation.find({ 
             terrain: { $in: ids }, 
@@ -97,6 +102,7 @@ module.exports = {
 
         var end = new Date();
         end.setHours(23,59,59,999);
+        //console.log((start), (end))
         const dataToday = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
@@ -109,8 +115,14 @@ module.exports = {
         var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
         var last = first + 6; // last day is the first day + 6
 
+        console.log(first)
+        console.log(last)
+
         var firstday = new Date(curr.setDate(first)).setHours(0,0,0,0);
         var lastday = new Date(curr.setDate(last)).setHours(23,59,59,999);
+
+        console.log(new Date(firstday), new Date(lastday));
+
 
         const dataWeek = await Reservation.find({ 
             terrain: { $in: ids }, 
@@ -133,6 +145,7 @@ module.exports = {
         });
 
         res.json({ dataToday, dataWeek, dataMonth })
+
     },
     getTerrainReservations : async(req,res,next)=>{
         const { _id } = req.params;
@@ -141,16 +154,23 @@ module.exports = {
     },
     generateLastWeekStats: async (req, res) => {
         const user = req.user;
+        // console.log(user)
         const terrains = await Terrain.find({ user });
+        // console.log("ussser", terrains);
         let ids = terrains.map((el) => { return el._id })
 
         var curr = new Date; // get current date
         var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
         var last = first; // last day is the first day + 6
         first = first -7;
+        console.log(first)
+        console.log(last)
 
         var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
         var lastday = new Date(curr.setDate(last)).setHours(0,59,59,999);
+
+        console.log(new Date(firstday), new Date(lastday));
+
 
         const reservations = await Reservation.find({ 
             terrain: { $in: ids }, 
