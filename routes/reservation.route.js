@@ -19,8 +19,10 @@ router.route('/:_id')
     .get(passportJwt , reservationController.getOne)
     .patch(reservationController.getTerrainReservations)
 
-router.route('/generate/stats')
-    .get(passportJwt, reservationController.generateStats)
+router.get('/generate/stats',passportJwt, reservationController.generateStats);
+
+router.get('/generate/stats/last-week',passportJwt, reservationController.generateLastWeekStats);
+
 router.route('/generate/top')
     .get(passportJwt, reservationController.topPlayers)
 

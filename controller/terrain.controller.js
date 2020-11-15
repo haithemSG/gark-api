@@ -51,6 +51,15 @@ module.exports = {
         const { _id } = req.params;
         let terrain = await Terrain.findOne({ _id });
         const  { image } = req.body;
+
+        if(terrain.image){
+            if(terrain.image.indexOf('assets/') == -1){
+                fs.unlinkSync(`public/images/terrains/${terrain.image}`, (err)=>{
+                    if(err) console.log("error deletong file", err);
+                })
+            }
+        }
+
         terrain.image = image;
         await terrain.save();
         res.json({ terrain });
@@ -58,17 +67,6 @@ module.exports = {
     uploadImage: async (req,res,next)=>{
         const { _id } = req.params;
         let terrain = await Terrain.findOne({ _id }).populate('user');
-        // console.log("terrain", terrain);
-        // console.log(terrain.user._id , req.user._id );
-        // console.log("vs", terrain.user._id != req.user._id );
-
-        console.log(terrain);
-
-        // console.log(req.user.email)
-        // console.log(terrain.user.email);
-        // console.log(!terrain);
-        // console.log(terrain.user.email != req.user.email);
-        // console.log(terrain || terrain.user._id != req.user._id);
         
         if(!terrain || terrain.user.email != req.user.email ){
             fs.unlinkSync(`public/images/terrains/${req.file.filename}`, (err)=>{
@@ -78,9 +76,7 @@ module.exports = {
         }
 
         if(terrain.image){
-            console.log("there is an image")
             if(terrain.image && terrain.image.indexOf('assets/') == -1){
-                console.log("deleting")
                 fs.unlinkSync(`public/images/terrains/${terrain.image}`, (err)=>{
                     if(err) console.log("error deletong file", err);
                 })
@@ -91,5 +87,6 @@ module.exports = {
         terrain.image = req.file.filename;
         await terrain.save();
         res.json({message : "success", image : terrain.image})
-    }
+    },
+    
 }
