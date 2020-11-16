@@ -12,6 +12,10 @@ const reservationSchema = mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'terrain'
     },
+    frais: {
+        type : Number,
+        default :0
+    },
     StartTime: {
         type: Date
     },

@@ -27,6 +27,7 @@ router.route('/generate/top')
     .get(passportJwt, reservationController.topPlayers)
 
 router.get('/generate/count', passportJwt, reservationController.countReservation)
+router.get('/generate/countMoney', passportJwt, reservationController.countReservationMoney)
 
 
 

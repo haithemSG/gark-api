@@ -37,4 +37,14 @@ router.route('/:_id')
 router.put('/image/select/:_id', passportJwt , terrainController.updateImageSelect)
 router.post('/image/upload/:_id', passportJwt, upload.single('terrain'),  terrainController.uploadImage)
 
+
+
+router.route('/media/image-upload')
+    .get(passportJwt, terrainController.imageUploadStatus)
+    .post(passportJwt, terrainController.imageUpload)
+
+
+router.put( '/image/change/:_id', passportJwt, terrainController.updateImageName)
+
+
 module.exports = router
