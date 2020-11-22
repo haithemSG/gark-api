@@ -25,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname + "/mail"));
 app.use(cors());
 const indexRouter = require('./routes/index.route');
 app.use('/api', indexRouter);

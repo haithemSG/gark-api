@@ -22,13 +22,17 @@ const userSchema = new Schema({
             maxlength: 64
         },
         picture: {
-            path: { type: String },
-            name: { type: String },
-            alias: { type: String }
+            type: String
         },
         gender:{
             type :String,
             default : 'Male'
+        },
+        telephone : {
+            type: String
+        },
+        birthday: {
+            type: String
         }
     },
     role: {

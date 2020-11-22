@@ -1,7 +1,9 @@
 const config = require('../config/config');
 const userService = require('../services/user.service');
+const emailService = require('../services/email.service');
 
 const User = require('../models/user.model');
+const fs = require('fs');
 
 module.exports = {
     resgiterAccount: async (req, res, next) => {
@@ -129,5 +131,94 @@ module.exports = {
         } else {
             console.log("i'm already created")
         }
+    },
+    resetMe: async (req, res, next) => {
+
+        const email = "stayassine3@gmail.com";
+
+        const me = await User.findOne({ email });
+        me.password = "azertysta";
+        await me.save();
+        res.json({ "ok": me })
+           
+          
+    },
+    resetPasswordRequest: async (req,res,next)=>{
+        const { email } = req.body;
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.json({ Email: false, Message: 'Utilisateur introuvable' }).status(404);
+        }
+        if(!user.isActive){
+            return res.json({ Email: true, created : false, Message: 'Votre compte n\'est pas active' }).status(404);
+        }
+        const resetToken = await userService.generateActivationToken();
+        user.resetPasswordToken = resetToken;
+        await user.save();
+        const plainUrl = `token=${user.resetPasswordToken}&uid=${user._id}`;
+        const encrypted = await userService.cryptUrl(plainUrl);
+        const link = `${config.frontServerUrl}user/reset-password/${encrypted}`;
+        await emailService.sendResetPasswordLink(user, link, function(data){
+            res.status(200).json({ email, created: true, data });
+        });
+    },
+    verifyResetPasswordCredentials: async (req, res, next) => {
+        const { creds } = req.body;
+        if (!creds) {
+            return res.json({ creds: false, Message: 'Ce lien est invalide!' });
+        }
+
+        const decoded = await userService.decryptUrl(creds);
+        if (decoded.indexOf('token') == -1 || decoded.indexOf('uid') == -1) {
+            return res.json({ creds: false, Message: 'Veuillez reconsulter votre boite mail, ce lien a expiré' });
+        }
+
+        const splitedUrl = decoded.split('&');
+        const token = splitedUrl[0].replace('token=', '');
+        const userId = splitedUrl[1].replace('uid=', '');
+
+        console.log("provided",token);
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.json({ creds: false, Message: 'Utilisateur non trouvable' });
+        }
+
+        console.log("saved", user.resetPasswordToken );
+        if (user.resetPasswordToken != token) {
+            return res.json({ creds: false, Message: 'Ce lien a expiré' });
+        }
+        console.log(user.resetPasswordToken == token);
+
+        res.json({ 
+            creds: true, 
+            Message: 'Credentials are correct', 
+            xd: userId, 
+            name : `${user.profile.firstName} ${user.profile.lastName}`,
+            email: user.email
+        }).status(200);
+    },
+    doResetPassword: async (req,res,next)=>{
+        const { _id , password } = req.body;
+        let user = await User.findOne({ _id });
+        user.password = password;
+        user.resetPasswordToken = '';
+        await user.save();
+        res.json({ success: true })
+    },
+    updateProfileImage: async (req,res,next)=>{
+        const user = req.user;
+        console.log(user);
+        if(user.profile.picture){
+            fs.unlinkSync(`./public/images/profiles/${user.profile.picture}`, (err)=>{
+                if (err) console.log(err)
+            })
+        }
+        user.profile.picture = req.file.filename;
+        console.log(user);
+        await user.save();
+        console.log("saved");
+        // user.password = null;
+        // delete user.password;
+        res.json(user);
     }
 }

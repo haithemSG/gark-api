@@ -46,7 +46,8 @@ module.exports = {
         const terrains = await Terrain.find({ user });
         let ids = terrains.map((el) => { return el._id })
         const reservations = await Reservation.find({ terrain: { $in: ids } }).populate('terrain');
-        res.json({ reservations, user });
+        
+        res.json({ reservations, user, terrains });
     },
     getOne: async (req, res) => {
         const { _id } = req.params;

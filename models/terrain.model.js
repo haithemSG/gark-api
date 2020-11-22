@@ -15,6 +15,9 @@ const terrainSchema = mongoose.Schema({
     address: {
         type: String
     },
+    color: {
+        type: String
+    },
     geoloacation: {
         lang: {
             type: Number

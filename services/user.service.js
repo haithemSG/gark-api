@@ -8,6 +8,8 @@ const cryptCredentials = {
     password: config.encryption_url
 }
 
+var CryptoJS = require("crypto-js");
+
 module.exports = {
     isEmailUnique: async (email) => {
         const user = await User.findOne({ email });
@@ -26,19 +28,35 @@ module.exports = {
         if (plainUrl == null || plainUrl == undefined) {
             return null;
         }
-        var cipher = crypto.createCipher(cryptCredentials.algorithm, cryptCredentials.password);
-        var crypted = cipher.update(plainUrl, 'utf8', 'hex')
-        crypted += cipher.final('hex');
-        return crypted;
+
+        var ciphertext = CryptoJS.AES.encrypt(JSON.stringify(plainUrl), config.encryption_url).toString();
+        // var crypted = ciphertext.update()
+        ciphertext = ciphertext.toString().replace(/\+/g,'p1L2u3S').replace(/\//g,'s1L2a3S4h').replace(/=/g,'e1Q2u3A4l');
+        // var cipher = crypto.createCipher(cryptCredentials.algorithm, cryptCredentials.password);
+        // var crypted = cipher.update(plainUrl, 'utf8', 'hex')
+        // crypted += cipher.final('hex');
+        return ciphertext;
     },
     decryptUrl: async (encryptedUrl) => {
         if (encryptedUrl == null || encryptedUrl == undefined) {
             return null;
         }
-        var decipher = crypto.createDecipher(cryptCredentials.algorithm, cryptCredentials.password);
-        var dec = decipher.update(encryptedUrl, 'hex', 'utf8')
-        dec += decipher.final('utf8');
-        return dec;
+
+        encryptedUrl = encryptedUrl.replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '=');
+        try {
+            const bytes = CryptoJS.AES.decrypt(encryptedUrl, config.encryption_url);
+            if (bytes.toString()) {
+              return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            }
+            return data;
+
+          } catch (e) {
+              return "";
+          }
+        // var decipher = crypto.createDecipher(cryptCredentials.algorithm, cryptCredentials.password);
+        // var dec = decipher.update(encryptedUrl, 'hex', 'utf8')
+        // dec += decipher.final('utf8');
+        // return dec;
     },
     signInToken : (user) => {
         return JWT.sign({
