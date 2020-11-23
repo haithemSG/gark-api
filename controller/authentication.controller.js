@@ -77,7 +77,7 @@ module.exports = {
     },
     updateProfile: async (req, res, next) => {
         let userToUpdate = req.user;
-        const { email, password, firstName, lastName, gender, oldEmail } = req.body;
+        const { email, password, firstName, lastName, gender, oldEmail, telephone, birthday } = req.body;
         const emailToLowerCase = email.trim().toLowerCase();
         //verify if it's his account
         if(oldEmail !== userToUpdate.email){
@@ -101,6 +101,8 @@ module.exports = {
         userToUpdate.profile.firstName = firstName;
         userToUpdate.profile.lastName = lastName;
         userToUpdate.profile.gender = gender;
+        userToUpdate.profile.birthday = birthday;
+        userToUpdate.profile.telephone = telephone;
 
         await userToUpdate.save();
         res.json({ updated: true, user: userToUpdate })
