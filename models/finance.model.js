@@ -16,6 +16,9 @@ const finSchema = mongoose.Schema({
     },
     isSpent: {
         type: Boolean,
+    },
+    date: {
+        type: Date
     }
 }, {
     timestamps: true

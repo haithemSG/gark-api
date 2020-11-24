@@ -10,7 +10,7 @@ module.exports = {
         const { email, password, firstName, lastName, gender } = req.body;
         const emailToLowerCase = email.trim().toLowerCase();
 
-        const isFound= await userService.isEmailUnique(emailToLowerCase);
+        const isFound = await userService.isEmailUnique(emailToLowerCase);
         console.log("is Found", isFound)
         if (!isFound) {
             return res.status(401).json({ created: false, message: "Email already registred" });
@@ -52,11 +52,11 @@ module.exports = {
     },
     login: async (req, res, next) => {
 
-        if(req.authInfo.error){
+        if (req.authInfo.error) {
             const reason = req.authInfo.error;
-            if(reason === "Active"){
+            if (reason === "Active") {
                 return res.status(400).json("Activate your account first");
-            }else{
+            } else {
                 return res.status(400).json("Credentials are incorrect");
             }
         }
@@ -77,32 +77,42 @@ module.exports = {
     },
     updateProfile: async (req, res, next) => {
         let userToUpdate = req.user;
-        const { email, password, firstName, lastName, gender, oldEmail, telephone, birthday } = req.body;
-        const emailToLowerCase = email.trim().toLowerCase();
+
+
+
+        // console.log(req.body);
+        // console.log(userToUpdate);
+
+        const { email, password, profile } = req.body;
+
+        if (email.toLowerCase() != userToUpdate.email.toLowerCase()) {
+            return res.status(403).json({ Message: "Erreur Fatal ! vous n'êtes pas autorisé à mettre à jour ce profile!" })
+        }
+
+        // const emailToLowerCase = email.trim().toLowerCase();
         //verify if it's his account
-        if(oldEmail !== userToUpdate.email){
-            console.log("verifying")
-            return res.status(403).json({ updated : false , Message : "This is not your account !"});
-        }
-        if (userToUpdate.email != emailToLowerCase) {
-            console.log("emails")
-            //trying to update his email
-            if (!userService.isEmailUnique(emailToLowerCase)) {
-                return res.status(400).json({ updated: false, message: "Email already registred" });
-            }
-        }
+        // if(oldEmail !== userToUpdate.email){
+        //     console.log("verifying")
+        //     return res.status(403).json({ updated : false , Message : "This is not your account !"});
+        // }
+        // if (userToUpdate.email != emailToLowerCase) {
+        //     console.log("emails")
+        //     //trying to update his email
+        //     if (!userService.isEmailUnique(emailToLowerCase)) {
+        //         return res.status(400).json({ updated: false, message: "Email already registred" });
+        //     }
+        // }
 
         const isPasswordMatch = await userToUpdate.isValidPassword(password);
         if (!isPasswordMatch) {
-            return res.status(401).json({ updated: false, Message: 'Password is incorrect' });
+            return res.status(401).json({ updated: false, Message: 'Mot de passe incorrect!' });
         }
 
-        userToUpdate.email = emailToLowerCase;
-        userToUpdate.profile.firstName = firstName;
-        userToUpdate.profile.lastName = lastName;
-        userToUpdate.profile.gender = gender;
-        userToUpdate.profile.birthday = birthday;
-        userToUpdate.profile.telephone = telephone;
+        // userToUpdate.email = emailToLowerCase;
+        userToUpdate.profile.firstName = profile.firstName;
+        userToUpdate.profile.lastName = profile.lastName;
+        userToUpdate.profile.telephone = profile.telephone;
+        userToUpdate.profile.address = profile.address;
 
         await userToUpdate.save();
         res.json({ updated: true, user: userToUpdate })
@@ -142,17 +152,17 @@ module.exports = {
         me.password = "azertysta";
         await me.save();
         res.json({ "ok": me })
-           
-          
+
+
     },
-    resetPasswordRequest: async (req,res,next)=>{
+    resetPasswordRequest: async (req, res, next) => {
         const { email } = req.body;
         const user = await User.findOne({ email })
         if (!user) {
             return res.json({ Email: false, Message: 'Utilisateur introuvable' }).status(404);
         }
-        if(!user.isActive){
-            return res.json({ Email: true, created : false, Message: 'Votre compte n\'est pas active' }).status(404);
+        if (!user.isActive) {
+            return res.json({ Email: true, created: false, Message: 'Votre compte n\'est pas active' }).status(404);
         }
         const resetToken = await userService.generateActivationToken();
         user.resetPasswordToken = resetToken;
@@ -160,7 +170,7 @@ module.exports = {
         const plainUrl = `token=${user.resetPasswordToken}&uid=${user._id}`;
         const encrypted = await userService.cryptUrl(plainUrl);
         const link = `${config.frontServerUrl}user/reset-password/${encrypted}`;
-        await emailService.sendResetPasswordLink(user, link, function(data){
+        await emailService.sendResetPasswordLink(user, link, function (data) {
             res.status(200).json({ email, created: true, data });
         });
     },
@@ -179,39 +189,39 @@ module.exports = {
         const token = splitedUrl[0].replace('token=', '');
         const userId = splitedUrl[1].replace('uid=', '');
 
-        console.log("provided",token);
+        console.log("provided", token);
         const user = await User.findById(userId);
         if (!user) {
             return res.json({ creds: false, Message: 'Utilisateur non trouvable' });
         }
 
-        console.log("saved", user.resetPasswordToken );
+        console.log("saved", user.resetPasswordToken);
         if (user.resetPasswordToken != token) {
             return res.json({ creds: false, Message: 'Ce lien a expiré' });
         }
         console.log(user.resetPasswordToken == token);
 
-        res.json({ 
-            creds: true, 
-            Message: 'Credentials are correct', 
-            xd: userId, 
-            name : `${user.profile.firstName} ${user.profile.lastName}`,
+        res.json({
+            creds: true,
+            Message: 'Credentials are correct',
+            xd: userId,
+            name: `${user.profile.firstName} ${user.profile.lastName}`,
             email: user.email
         }).status(200);
     },
-    doResetPassword: async (req,res,next)=>{
-        const { _id , password } = req.body;
+    doResetPassword: async (req, res, next) => {
+        const { _id, password } = req.body;
         let user = await User.findOne({ _id });
         user.password = password;
         user.resetPasswordToken = '';
         await user.save();
         res.json({ success: true })
     },
-    updateProfileImage: async (req,res,next)=>{
+    updateProfileImage: async (req, res, next) => {
         const user = req.user;
         console.log(user);
-        if(user.profile.picture){
-            fs.unlinkSync(`./public/images/profiles/${user.profile.picture}`, (err)=>{
+        if (user.profile.picture) {
+            fs.unlinkSync(`./public/images/profiles/${user.profile.picture}`, (err) => {
                 if (err) console.log(err)
             })
         }
