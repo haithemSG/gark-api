@@ -27,7 +27,14 @@ const upload = multer({storage})
 
 router.route('/')
     .get(passportJwt, terrainController.getAll)
-    .post(passportJwt, terrainController.create)
+    .post(passportJwt, terrainController.create);
+
+router.route('/complexe')
+    .get(passportJwt, terrainController.getComplexe)
+    .put(passportJwt, terrainController.updateComplexe);
+
+router.route('/complexe/:_id')
+    .post(terrainController.createComplexe)
 
 router.route('/:_id')
     .delete(passportJwt , terrainController.delete)

@@ -7,34 +7,23 @@ const fs = require('fs');
 
 module.exports = {
     resgiterAccount: async (req, res, next) => {
-        const { email, password, firstName, lastName, gender } = req.body;
+        const { email, password, firstName, lastName } = req.body;
         const emailToLowerCase = email.trim().toLowerCase();
 
         const isFound = await userService.isEmailUnique(emailToLowerCase);
         console.log("is Found", isFound)
         if (!isFound) {
-            return res.status(401).json({ created: false, message: "Email already registred" });
+            return res.json({ created: false, message: "Email already registred" });
         }
 
         const token = userService.generateActivationToken();
-
-        // const user = new User({
-        //     email: emailToLowerCase,
-        //     password: password,
-        //     profile: {
-        //         firstName: firstName,
-        //         lastName: lastName,
-        //         gender: gender
-        //     },
-        //     isActive: false,
-        //     activationToken: token
-        // })
+        
         const user = new User({
             email: emailToLowerCase,
             password: password,
             profile: {
                 firstName: firstName,
-                lastName: "",
+                lastName: lastName,
                 gender: ""
             },
             isActive: true,
@@ -154,6 +143,20 @@ module.exports = {
         res.json({ "ok": me })
 
 
+    },
+    updatePassword: async (req,res,next)=>{
+        const user = req.user;
+
+        const { old, newPassword }= req.body;
+
+        const isPasswordMatch = await user.isValidPassword(old);
+        if (!isPasswordMatch) {
+            return res.json({ updated: false, Message: 'Mot de passe incorrect!' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+        res.json({ updated :true , Message: "Mot de passe mis à jour avec succès"})
     },
     resetPasswordRequest: async (req, res, next) => {
         const { email } = req.body;

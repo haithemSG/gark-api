@@ -2,7 +2,8 @@ const Terrain = require('../models/terrain.model');
 const Reservation = require('../models/reservation.model')
 const fs = require('fs');
 const { promisify } = require('util')
-
+const Complexe = require('../models/complexe.model');
+const User = require('../models/user.model');
 const unlinkAsync = promisify(fs.unlink)
 let uploads = {};
 
@@ -233,5 +234,54 @@ module.exports = {
         terrain.image = req.body.imageName;
         await terrain.save();
         res.json(terrain)
+    },
+    createComplexe: async (req,res,next)=>{
+        // const owner = req.user;
+        const { _id } = req.params;
+        const { address, numero, opening, closing, name } = req.body;
+        const owner = await User.findOne({ _id })
+        const complexe = new Complexe({
+            owner, address, numero, opening, closing, name
+        });
+        await complexe.save();
+        res.json(complexe)
+    },
+    getComplexe: async (req,res,next)=>{
+        const user = req.user;
+        console.log(user);
+        const complexe = await Complexe.findOne({ owner: user });
+        res.json(complexe);
+    },
+    updateComplexe: async (req,res,next)=>{
+        const user = req.user;
+        const { _id, name, address,numero, opening, closing } = req.body;
+        console.log("search");
+        if(_id){
+            let complexe = await Complexe.findOne({ _id }).populate('owner');
+            if(complexe){
+                console.log(complexe.owner._id, "==", user._id, complexe.owner._id.equals(user._id));
+                console.log(complexe.owner._id == user._id );
+                if(complexe.owner._id.equals(user._id) ){
+                    complexe.name= name,
+                    complexe.address= address;
+                    complexe.opening= opening;
+                    complexe.closing = closing;
+                    complexe.numero = numero;
+                    await complexe.save();
+                    return res.json({ updated : true, Message: "Complexe mis à jour avec succès", complexe })
+                }
+                return res.json({ updated : false ,  Message: "Vous n'êtes pas le proprietaire de ce complexe" })
+            }   
+        }        
+        const newComplexe = new Complexe({
+            name,
+            address,
+            owner: user,
+            numero,
+            opening,
+            closing
+        });
+        await newComplexe.save();
+        return res.json({ updated : false, Message: "Complexe créé avec succès" , complexe : newComplexe })
     }
 }

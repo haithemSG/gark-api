@@ -37,6 +37,8 @@ router.route('/profile')
 router.route('/profile-image')
   .post(passportJwt, upload.single('image'), authenticationController.updateProfileImage)
 
+router.post('/update-password', passportJwt, authenticationController.updatePassword)
+
 router.route('/signout')
   .get(passportJwt, authenticationController.signOut);
 
