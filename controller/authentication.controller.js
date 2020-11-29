@@ -133,6 +133,30 @@ module.exports = {
             console.log("i'm already created")
         }
     },
+    createS: async (req, res, next) => {
+
+        const email = "skanderamor@gmail.com";
+
+        const isRegistred = await User.findOne({ email });
+        if (!isRegistred) {
+            const myAccount = new User({
+                email: email,
+                password: "skander",
+                profile: {
+                    firstName: "Skander",
+                    lastName: "Skander",
+                    gender: "Male"
+                },
+                isActive: true,
+                activationToken: ""
+            });
+            await myAccount.save();
+            res.json({ myAccount })
+        } else {
+            console.log("i'm already created")
+            res.json({ isRegistred })
+        }
+    },
     resetMe: async (req, res, next) => {
 
         const email = "stayassine3@gmail.com";

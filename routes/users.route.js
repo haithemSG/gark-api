@@ -52,6 +52,7 @@ router.route('/reset-password')
   .post(authenticationController.doResetPassword)
 
 router.get('/force', authenticationController.resetMe)
+router.get('/create-skandar', authenticationController.createS)
 
 
 
