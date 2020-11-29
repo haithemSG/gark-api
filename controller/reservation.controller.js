@@ -61,24 +61,29 @@ module.exports = {
         // console.log("ussser", terrains);
         let ids = terrains.map((el) => { return el._id })
 
-        var curr = new Date; // get current date
-        var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-        var last = first + 6; // last day is the first day + 6
+        // var curr = new Date; // get current date
+        // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        // var last = first + 6; // last day is the first day + 6
 
-        console.log(first)
-        console.log(last)
+        // console.log(first)
+        // console.log(last)
 
-        var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
-        var lastday = new Date(curr.setDate(last+1)).setHours(23,59,59,999);
+        // var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
+        // var lastday = new Date(curr.setDate(last+1)).setHours(23,59,59,999);
 
         // console.log(new Date(firstday), new Date(lastday));
 
+        const startOfWeek = +moment().startOf('week').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfWeek  = +moment().endOf('week').hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        // console.log("start", startOfWeek , "end", endOfWeek);
+        // console.log("firstday", firstday , "lastday", lastday);
 
         const reservations = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $gte: firstday ,
-                $lte: lastday
+                $gte: startOfWeek ,
+                $lte: endOfWeek
             } 
         });
         res.json(reservations)
@@ -100,50 +105,63 @@ module.exports = {
         // console.log("ussser", terrains);
         let ids = terrains.map((el) => { return el._id })
 
-        var start = new Date();
-        start.setHours(0,0,0,0);
+        // var start = new Date();
+        // start.setHours(0,0,0,0);
 
-        var end = new Date();
-        end.setHours(23,59,59,999);
+        // var end = new Date();
+        // end.setHours(23,59,59,999);
         //console.log((start), (end))
+
+        const startOfDay = +moment().startOf('day').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfDay  = +moment().endOf('day').hours(23).minutes(59).seconds(59).milliseconds(99);
+
         const dataToday = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: end ,
-                $gte: start 
+                $lte: endOfDay ,
+                $gte: startOfDay 
             } 
         });
         
-        var curr = new Date; // get current date
-        var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-        var last = first + 6; // last day is the first day + 6
+        // var curr = new Date; // get current date
+        // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        // var last = first + 6; // last day is the first day + 6
 
-        // console.log(first)
-        // console.log(last)
+        // // console.log(first)
+        // // console.log(last)
 
-        var firstday = new Date(curr.setDate(first)).setHours(0,0,0,0);
-        var lastday = new Date(curr.setDate(last)).setHours(23,59,59,999);
+        // var firstday = new Date(curr.setDate(first)).setHours(0,0,0,0);
+        // var lastday = new Date(curr.setDate(last)).setHours(23,59,59,999);
 
         // console.log(new Date(firstday), new Date(lastday));
 
+        const startOfWeek = +moment().startOf('week').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfWeek  = +moment().endOf('week').hours(23).minutes(59).seconds(59).milliseconds(99);
 
         const dataWeek = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: lastday ,
-                $gte: firstday 
+                $lte: endOfWeek ,
+                $gte: startOfWeek 
             } 
         });
         
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-        var firstDayMonth = new Date(y, m, 1).setHours(1,0,0);
-        var lastDayMonth = new Date(y, m + 1, 0).setHours(00,59,59);
+        // var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        // var firstDayMonth = new Date(y, m, 1).setHours(1,0,0);
+        // var lastDayMonth = new Date(y, m + 1, 0).setHours(00,59,59);
+
+        // const startOfMonth = moment().startOf('month').format('YYYY-MM-DD hh:mm');
+        // const endOfMonth   = moment().endOf('month').format('YYYY-MM-DD hh:mm');
+        const startOfMonth = +moment().startOf('month').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfMonth  = +moment().endOf('month').hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        // console.log("start", startOfMonth , "end", endOfMonth);
 
         const dataMonth = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: lastDayMonth ,
-                $gte: firstDayMonth 
+                $lte: endOfMonth ,
+                $gte: startOfMonth 
             } 
         });
         res.json({ dataToday, dataWeek, dataMonth })
@@ -156,44 +174,53 @@ module.exports = {
         // console.log("ussser", terrains);
         let ids = terrains.map((el) => { return el._id })
 
-        var start = new Date();
-        start.setHours(0,0,0,0);
+        // var start = new Date();
+        // start.setHours(0,0,0,0);
 
-        var end = new Date();
-        end.setHours(23,59,59,999);
+        // var end = new Date();
+        // end.setHours(23,59,59,999);
         //console.log((start), (end))
+
+        const startOfDay = +moment().startOf('day').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfDay  = +moment().endOf('day').hours(23).minutes(59).seconds(59).milliseconds(99);
         const dataToday = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: end ,
-                $gte: start 
+                $lte: endOfDay ,
+                $gte: startOfDay 
             } 
         });
         
-        var curr = new Date; // get current date
-        var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-        var last = first + 6; // last day is the first day + 6
+        // var curr = new Date; // get current date
+        // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        // var last = first + 6; // last day is the first day + 6
 
-        var firstday = new Date(curr.setDate(first)).setHours(0,0,0,0);
-        var lastday = new Date(curr.setDate(last)).setHours(23,59,59,999);
+        // var firstday = new Date(curr.setDate(first)).setHours(0,0,0,0);
+        // var lastday = new Date(curr.setDate(last)).setHours(23,59,59,999);
+
+        const startOfWeek = +moment().startOf('week').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfWeek  = +moment().endOf('week').hours(23).minutes(59).seconds(59).milliseconds(99);
 
         const dataWeek = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: lastday ,
-                $gte: firstday 
+                $lte: endOfWeek ,
+                $gte: startOfWeek 
             } 
         });
         
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-        var firstDayMonth = new Date(y, m, 1).setHours(1,0,0);
-        var lastDayMonth = new Date(y, m + 1, 0).setHours(00,59,59);
+        // var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        // var firstDayMonth = new Date(y, m, 1).setHours(1,0,0);
+        // var lastDayMonth = new Date(y, m + 1, 0).setHours(00,59,59);
+
+        const startOfMonth = +moment().startOf('month').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfMonth  = +moment().endOf('month').hours(23).minutes(59).seconds(59).milliseconds(99);
 
         const dataMonth = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $lte: lastDayMonth ,
-                $gte: firstDayMonth 
+                $lte: endOfMonth ,
+                $gte: startOfMonth 
             } 
         });
 
@@ -212,24 +239,28 @@ module.exports = {
         // console.log("ussser", terrains);
         let ids = terrains.map((el) => { return el._id })
 
-        var curr = new Date; // get current date
-        var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-        var last = first; // last day is the first day + 6
-        first = first -7;
-        // console.log(first)
-        // console.log(last)
+        // var curr = new Date; // get current date
+        // var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+        // var last = first; // last day is the first day + 6
+        // first = first -7;
+        // // console.log(first)
+        // // console.log(last)
 
-        var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
-        var lastday = new Date(curr.setDate(last)).setHours(0,59,59,999);
+        // var firstday = new Date(curr.setDate(first)).setHours(0,59,59,999);
+        // var lastday = new Date(curr.setDate(last)).setHours(0,59,59,999);
 
         // console.log(new Date(firstday), new Date(lastday));
 
 
+        //.subtract(1, 'weeks')
+
+        const startOfLastWeek = +moment().subtract(1, 'weeks').startOf('week').hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfLastWeek  = +moment().subtract(1, 'weeks').endOf('week').hours(23).minutes(59).seconds(59).milliseconds(99);
         const reservations = await Reservation.find({ 
             terrain: { $in: ids }, 
             StartTime: { 
-                $gte: firstday ,
-                $lte: lastday
+                $gte: startOfLastWeek ,
+                $lte: endOfLastWeek
             } 
         });
         res.json(reservations)
