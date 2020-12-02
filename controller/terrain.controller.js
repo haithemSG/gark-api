@@ -10,8 +10,8 @@ let uploads = {};
 module.exports = {
     create: async (req,res)=>{
         const user = req.user
-        const { name, address, color } = req.body;
-        const terrain = new Terrain({ name, address , color, user: user });
+        const { name, address, color , duration} = req.body;
+        const terrain = new Terrain({ name, address , color, duration, user: user });
         await terrain.save();
         res.json(terrain);
     } ,
@@ -33,10 +33,11 @@ module.exports = {
     update: async (req,res)=>{
         const { _id } = req.params;
         const terrain = await Terrain.findOne({ _id });
-        const { name, address , color} = req.body;
+        const { name, address , color, duration} = req.body;
         terrain.name=  name;
         terrain.address=  address;
         terrain.color=  color;
+        terrain.duration=  duration;
          
         await terrain.save();
         return res.json(terrain);

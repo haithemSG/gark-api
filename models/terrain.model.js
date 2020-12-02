@@ -18,6 +18,10 @@ const terrainSchema = mongoose.Schema({
     color: {
         type: String
     },
+    duration: {
+        type: Number,
+        default: 60
+    },
     geoloacation: {
         lang: {
             type: Number
