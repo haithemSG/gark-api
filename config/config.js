@@ -11,5 +11,5 @@ module.exports = {
     mail_pwd: process.env.PASS_MAIL,
     encryption_pwd: process.env.ENCRYPTION_PASSWORD,
     encryption_url: process.env.ENCRYPTION_URL,
-    frontServerUrl : process.env.NODE_ENV == 'dev' ? "http://localhost:4020/": "http://51.89.167.87:2030/"
+    frontServerUrl : process.env.NODE_ENV == 'dev' ? "http://localhost:4020/": "https://gark.app"
 }
