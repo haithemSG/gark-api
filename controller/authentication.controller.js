@@ -41,6 +41,7 @@ module.exports = {
     },
     login: async (req, res, next) => {
 
+        console.log("test");
         if (req.authInfo.error) {
             const reason = req.authInfo.error;
             if (reason === "Active") {
@@ -186,10 +187,10 @@ module.exports = {
         const { email } = req.body;
         const user = await User.findOne({ email })
         if (!user) {
-            return res.json({ Email: false, Message: 'Utilisateur introuvable' }).status(404);
+            return res.status(404).json({ Email: false, Message: 'Utilisateur introuvable' });
         }
         if (!user.isActive) {
-            return res.json({ Email: true, created: false, Message: 'Votre compte n\'est pas active' }).status(404);
+            return res.status(404).json({ Email: true, created: false, Message: 'Votre compte n\'est pas active' });
         }
         const resetToken = await userService.generateActivationToken();
         user.resetPasswordToken = resetToken;
