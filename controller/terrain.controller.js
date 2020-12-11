@@ -60,7 +60,7 @@ module.exports = {
 
         if(terrain.image){
             if(terrain.image.indexOf('assets/') == -1){
-                fs.unlinkSync(`public/images/terrains/${terrain.image}`, (err)=>{
+                fs.unlink(`public/images/terrains/${terrain.image}`, (err)=>{
                     if(err) console.log("error deletong file", err);
                 })
             }
@@ -75,7 +75,7 @@ module.exports = {
         let terrain = await Terrain.findOne({ _id }).populate('user');
         
         if(!terrain || terrain.user.email != req.user.email ){
-            fs.unlinkSync(`public/images/terrains/${req.file.filename}`, (err)=>{
+            fs.unlink(`public/images/terrains/${req.file.filename}`, (err)=>{
                 if(err) console.log("error deletong file", err);
             })
             return res.status(404).json({"message": 'Terrain introuvable'})
@@ -83,7 +83,7 @@ module.exports = {
 
         if(terrain.image){
             if(terrain.image && terrain.image.indexOf('assets/') == -1){
-                fs.unlinkSync(`public/images/terrains/${terrain.image}`, (err)=>{
+                fs.unlink(`public/images/terrains/${terrain.image}`, (err)=>{
                     if(err) console.log("error deletong file", err);
                 })
             }
@@ -96,28 +96,22 @@ module.exports = {
     },
     imageUploadStatus: async (req, res, next)=>{
         
-        //console.log('Successfully came');
         //From GET request 3 parameters below and store in variable
         let fileId = req.headers['x-file-id'];
         let name = req.headers['name'];
         let fileSize = parseInt(req.headers['size'], 10);
-        console.log(name);
         if (name) {
             try { 
                 let stats = fs.statSync('/public/images/terrains/' + name); //grabs file information and returns
-                console.log("stats are from get method", stats)
                 //checking file exists or not
                 if (stats.isFile()) {
-                    console.log(`fileSize is ${fileSize} and already uploaded file size ${stats.size}`);
                     if (fileSize == stats.size) {
                         res.send({ 'status': 'file is present' }) //returns if file exists
                         return;
                     }
                     if (!uploads[fileId])
                         uploads[fileId] = {}
-                    console.log(uploads[fileId]);
                     uploads[fileId]['bytesReceived'] = stats.size;//checks total amount of file uploaded
-                    console.log(uploads[fileId], stats.size);
                 }
             } catch (er) {
 
@@ -135,21 +129,15 @@ module.exports = {
         let startByte = parseInt(req.headers['x-start-byte'], 10);
         let name = req.headers['name'];
         let fileSize = parseInt(req.headers['size'], 10);
-        console.log("headers :: ", req.headers)
-        console.log('file Size', fileSize, fileId, startByte);
         if (uploads[fileId] && fileSize == uploads[fileId].bytesReceived) {
             res.end();
             return;
         }
-
-        console.log("fileSize :", fileSize);
-
         if (!fileId) {
             res.writeHead(400, "No file id");
             res.end(400);
         }
-        console.log("uploads:", uploads[fileId]);
-        console.log("uploads array:", uploads);
+        
         if (!uploads[fileId])
             uploads[fileId] = {};
 
@@ -177,7 +165,6 @@ module.exports = {
         }
 
         req.on('data', function (data) {
-            //console.log("on data event");
             upload.bytesReceived += data.length; //adding length of data we are adding
         });
 
@@ -185,15 +172,11 @@ module.exports = {
 
         // when the request is finished, and all its data is written
         fileStream.on('close', function () {
-            console.log("on close event", upload.bytesReceived, fileSize);
             if (upload.bytesReceived == fileSize) {
-                console.log("name is", name);
                 let names = name.split('.');
                 let newName = +new Date() + "." + names[names.length - 1];
-                console.log("new name is ", newName)
                 fs.rename(`./public/images/terrains/${name}`, `./public/images/terrains/${newName}`, (err) => {
-                    if (err) throw err;
-                    console.log('Rename complete!', newName);
+                    if (err) console.log("err");;
                 })
                 delete uploads[fileId];
 
@@ -207,7 +190,6 @@ module.exports = {
                 res.end();
             } else {
                 // connection lost, leave the unfinished file around
-                console.log("on close event : File unfinished, stopped at " + upload.bytesReceived);
                 res.writeHead(500, "Server Error");
                 res.end();
             }
@@ -215,7 +197,6 @@ module.exports = {
 
         // in case of I/O error - finish the request
         fileStream.on('error', function (err) {
-            console.log("on error event : fileStream error", err);
             res.writeHead(500, "File error");
             res.end();
         });
@@ -226,7 +207,7 @@ module.exports = {
 
         if(terrain.image){
             if(terrain.image.indexOf('assets') == -1){
-                fs.unlinkSync(`public/images/terrains/${terrain.image}`, (err)=>{
+                fs.unlink(`public/images/terrains/${terrain.image}`, (err)=>{
                     if(err) console.log("error deletong file", err);
                 })
             }
@@ -249,19 +230,15 @@ module.exports = {
     },
     getComplexe: async (req,res,next)=>{
         const user = req.user;
-        console.log(user);
         const complexe = await Complexe.findOne({ owner: user });
         res.json(complexe);
     },
     updateComplexe: async (req,res,next)=>{
         const user = req.user;
         const { _id, name, address,numero, opening, closing } = req.body;
-        console.log("search");
         if(_id){
             let complexe = await Complexe.findOne({ _id }).populate('owner');
             if(complexe){
-                console.log(complexe.owner._id, "==", user._id, complexe.owner._id.equals(user._id));
-                console.log(complexe.owner._id == user._id );
                 if(complexe.owner._id.equals(user._id) ){
                     complexe.name= name,
                     complexe.address= address;
