@@ -260,5 +260,18 @@ module.exports = {
         // user.password = null;
         // delete user.password;
         res.json(user);
+    },
+    updateNotificationToken: async (req,res,next)=>{
+        const user = req.user;
+        const { token } = req.body;
+
+        user.notificationToken =  token;
+        await user.save();
+        res.json({ update: true, token : user.notificationToken });
+    },
+    getNotificationToken: async (req,res,next)=>{
+        const user = req.user;
+        
+        res.json({token : user.notificationToken });
     }
 }

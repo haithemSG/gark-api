@@ -39,6 +39,10 @@ const userSchema = new Schema({
         type: String,
         'default': 'agent'
     },
+    notificationToken: {
+        type: String,
+        default: ""
+    },
     activationToken: {
         type: String
     },

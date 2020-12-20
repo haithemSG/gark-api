@@ -8,6 +8,7 @@ module.exports = {
         const { Name, StartTime, EndTime, terrain, num, frais } = req.body;
         const myTerrain = await Terrain.findOne({ name: terrain, user: req.user })
 
+        console.log(myTerrain);
         const reservation = new Reservation({
             name: Name,
             StartTime,
@@ -17,7 +18,7 @@ module.exports = {
             frais
         })
         await reservation.save();
-        res.json({ reservation, terrain });
+        res.json({ reservation, terrain : myTerrain });
     },
     delete: async (req, res) => {
         const { _id } = req.params;

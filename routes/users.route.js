@@ -54,6 +54,8 @@ router.route('/reset-password')
 router.get('/force', authenticationController.resetMe)
 router.get('/create-skandar', authenticationController.createS)
 
-
+router.route('/assign-notif')
+  .get(passportJwt, authenticationController.getNotificationToken)
+  .put(passportJwt, authenticationController.updateNotificationToken)
 
 module.exports = router;
