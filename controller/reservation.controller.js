@@ -13,14 +13,14 @@ module.exports = {
             $or: [
                 {
                     StartTime: {
-                        $gte: StartTime,
-                        $lte: EndTime
+                        $gt: StartTime,
+                        $lt: EndTime
                     }
                 },
                 {
                     EndTime: {
-                        $gte: StartTime,
-                        $lte: EndTime
+                        $gt: StartTime,
+                        $lt: EndTime
                     }
                 }
             ]
