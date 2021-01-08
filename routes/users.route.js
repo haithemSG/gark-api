@@ -28,7 +28,7 @@ router.route('/sign-up')
   .post(validateBody(schemas.registerSchema), authenticationController.resgiterAccount);
 
 router.route('/signin')
-  .post(validateBody(schemas.authSchema), passportSignIn, authenticationController.login);
+  .post( passportSignIn, authenticationController.login);
 
 router.route('/profile')
   .get(passportJwt, authenticationController.getProfile)

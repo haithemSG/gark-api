@@ -17,8 +17,9 @@ module.exports = {
         registerSchema: Joi.object().keys({
             email: Joi.string().email().required(),
             password: Joi.string().required(),
-            firstName: Joi.string().required(),
-            lastName: Joi.string().required(),
+            fullName: Joi.string().required(),
+            confirmPassword: Joi.string().required(),
+            terms: Joi.boolean().required(),
             // gender: Joi.string().required(),
         }),
         authSchema: Joi.object().keys({

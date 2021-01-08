@@ -7,7 +7,8 @@ const fs = require('fs');
 
 module.exports = {
     resgiterAccount: async (req, res, next) => {
-        const { email, password, firstName, lastName } = req.body;
+        const { email, password, fullName } = req.body;
+        console.log(fullName)
         const emailToLowerCase = email.trim().toLowerCase();
 
         const isFound = await userService.isEmailUnique(emailToLowerCase);
@@ -22,8 +23,7 @@ module.exports = {
             email: emailToLowerCase,
             password: password,
             profile: {
-                firstName: firstName,
-                lastName: lastName,
+                fullName: fullName,
                 gender: ""
             },
             isActive: true,
@@ -42,6 +42,7 @@ module.exports = {
     login: async (req, res, next) => {
 
         console.log("test");
+        console.log(req.body);
         if (req.authInfo.error) {
             const reason = req.authInfo.error;
             if (reason === "Active") {
@@ -99,10 +100,11 @@ module.exports = {
         }
 
         // userToUpdate.email = emailToLowerCase;
-        userToUpdate.profile.firstName = profile.firstName;
-        userToUpdate.profile.lastName = profile.lastName;
+        userToUpdate.profile.fullName = profile.fullName;
         userToUpdate.profile.telephone = profile.telephone;
         userToUpdate.profile.address = profile.address;
+        userToUpdate.profile.description = profile.description;
+        userToUpdate.profile.position.label = profile.position.label;
 
         await userToUpdate.save();
         res.json({ updated: true, user: userToUpdate })
@@ -121,8 +123,7 @@ module.exports = {
                 email: email,
                 password: "azertysta",
                 profile: {
-                    firstName: "Yassine",
-                    lastName: "Sta",
+                    fullName: "Yassine",
                     gender: "Male"
                 },
                 isActive: true,
@@ -144,8 +145,7 @@ module.exports = {
                 email: email,
                 password: "skander",
                 profile: {
-                    firstName: "Skander",
-                    lastName: "Skander",
+                    fullName: "Skander",
                     gender: "Male"
                 },
                 isActive: true,
@@ -233,7 +233,7 @@ module.exports = {
             creds: true,
             Message: 'Credentials are correct',
             xd: userId,
-            name: `${user.profile.firstName} ${user.profile.lastName}`,
+            name: `${user.profile.fullName}`,
             email: user.email
         }).status(200);
     },
