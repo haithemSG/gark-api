@@ -40,19 +40,20 @@ module.exports = {
         return res.json(group);
     },
     getAll: async (req,res)=>{
-        const groups = await Group.find();
+        const groups = await Group.find().populate({path:'joueurs'}).populate({path:'entraineur'});
 
         res.json(groups);
     },
     getByEntraineur: async (req,res)=>{
         const entraineur= req.user;
-        const group = await Group.find({ entraineur: user });
+        console.log(entraineur)
+        const group = await Group.find({ entraineur: entraineur });
 
-        res.json({ group, entraineur });
+        res.json(group);
     },
     getOne: async (req,res)=>{
         const { _id } = req.params;
-        const group = await Group.findOne({ _id });
+        const group = await Group.findOne({ _id }).populate({path:'joueurs'}).populate({path:'entraineur'});
         res.json({ group });
     },
     affectJoueurs: async (req,res)=>{

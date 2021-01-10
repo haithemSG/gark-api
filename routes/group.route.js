@@ -18,7 +18,7 @@ router.route('/:_id')
     .put(passportJwt , groupController.update)
     .get(passportJwt , groupController.getOne)
 
-router.route('byEntraineur/:_id')
+router.route('/byEntraineur')
     .get(passportJwt , groupController.getByEntraineur)
 
 router.route('affectJoueurs')

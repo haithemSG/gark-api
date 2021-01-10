@@ -21,7 +21,5 @@ router.route('/:_id')
 router.route('byEntraineur/:_id')
     .get(passportJwt , seanceController.getByEntraineur)
 
-router.route('affectJoueurs')
-    .post(passportJwt , seanceController.affectJoueurs)
 
 module.exports = router

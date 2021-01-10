@@ -9,26 +9,15 @@ const seanceSchema = mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'user'
     },
-    joueurs: [{
+    group: {
         type: mongoose.Types.ObjectId,
-        ref: 'user'
-    }],
-    address: {
-        type: String
+        ref: 'group'
     },
-    date: {
+    StartTime: {
         type: Date
     },
-    duration: {
-        type: Number
-    },
-    geoloacation: {
-        lang: {
-            type: Number
-        },
-        lat: {
-            type: Number
-        }
+    EndTime: {
+        type: Date
     },
     description: {
         type: String
