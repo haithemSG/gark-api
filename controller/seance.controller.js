@@ -6,6 +6,7 @@ const { promisify } = require('util')
 const User = require('../models/user.model');
 const unlinkAsync = promisify(fs.unlink)
 let uploads = {};
+const moment = require('moment');
 
 module.exports = {
     create: async (req,res)=>{
@@ -67,4 +68,65 @@ module.exports = {
         const seance = await Seance.findOne({ _id });
         res.json({ seance });
     },
+    generateStats: async (req, res) => {
+        
+        const startOfWeek = +moment().startOf('week').utcOffset(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfWeek = +moment().endOf('week').utcOffset(1).hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        const seances = await Seance.find({
+            StartTime: {
+                $gte: startOfWeek,
+                $lte: endOfWeek
+            }
+        });
+
+        res.json(seances)
+    },
+    countSeance: async (req, res) => {
+
+
+        const startOfDay = +moment().startOf('day').utcOffset(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfDay = +moment().endOf('day').utcOffset(1).hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        const dataToday = await Seance.find({
+            StartTime: {
+                $lte: endOfDay,
+                $gte: startOfDay
+            }
+        });
+
+        const startOfWeek = +moment().startOf('week').utcOffset(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfWeek = +moment().endOf('week').utcOffset(1).hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        const dataWeek = await Seance.find({
+            StartTime: {
+                $lte: endOfWeek,
+                $gte: startOfWeek
+            }
+        });
+
+        const startOfMonth = +moment().startOf('month').utcOffset(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfMonth = +moment().endOf('month').utcOffset(1).hours(23).minutes(59).seconds(59).milliseconds(99);
+
+        const dataMonth = await Seance.find({
+            StartTime: {
+                $lte: endOfMonth,
+                $gte: startOfMonth
+            }
+        });
+        res.json({ dataToday, dataWeek, dataMonth })
+    },
+    generateLastWeekStats: async (req, res) => {
+      
+        const startOfLastWeek = +moment().subtract(1, 'weeks').utcOffset(1).startOf('week').utcOffset(1).hours(0).minutes(0).seconds(0).milliseconds(0);
+        const endOfLastWeek = +moment().subtract(1, 'weeks').utcOffset(1).endOf('week').utcOffset(1).hours(23).minutes(59).seconds(59).milliseconds(99);
+        const seances = await Seance.find({
+            StartTime: {
+                $gte: startOfLastWeek,
+                $lte: endOfLastWeek
+            }
+        });
+        res.json(seances)
+    },
+   
 }

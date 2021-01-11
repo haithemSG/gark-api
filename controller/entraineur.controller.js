@@ -4,6 +4,7 @@ const { promisify } = require('util')
 const User = require('../models/user.model');
 const unlinkAsync = promisify(fs.unlink)
 let uploads = {};
+const userService = require('../services/user.service');
 
 module.exports = {
     delete: async (req,res)=>{
@@ -17,13 +18,13 @@ module.exports = {
         return res.json("Entraineur supprimer avec succès");
     },
     getAll: async (req,res)=>{
-        const entraineurs = await User.find({ role:'Coach' });
+        const entraineurs = await User.find({ role:'coach' });
 
         res.json(entraineurs);
     },
     getOne: async (req,res)=>{
         const { _id } = req.params;
-        const entraineur = await User.findOne({ _id,role:'Coach' });
+        const entraineur = await User.findOne({ _id,role:'coach' });
         res.json({ entraineur });
     },  
     create: async (req, res, next) => {
@@ -48,7 +49,7 @@ module.exports = {
                 telephone:telephone,
                 address:address,
                 dateOfBirth:dateOfBirth,
-                
+                rate:0  
             },
             role:'coach',
             isActive: true,

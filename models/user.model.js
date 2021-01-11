@@ -144,6 +144,9 @@ const userSchema = new Schema({
         },
         kitNumber:{
             type:Number
+        },
+        rating:{
+            type: Number
         }
     },
     role: {
