@@ -42,7 +42,7 @@ passport.use(new LocalStrategy({
         }
 
         const isPasswordMatch = await user.isValidPassword(password);
-
+        console.log("password valid ?", isPasswordMatch);
         if (!isPasswordMatch) {
             return done(null, true , { error : "Password" });
         }

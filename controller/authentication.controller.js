@@ -165,7 +165,7 @@ module.exports = {
         const me = await User.findOne({ email });
         me.password = "azertysta";
         await me.save();
-        res.json({ "ok": me })
+        res.json({ "ok": email })
 
 
     },

@@ -9,20 +9,20 @@ const cors = require('cors');
 
 const app = express();
 
-// mongoose.connect(`mongodb://${config.db_url}:${config.db_port}/${config.db_name}`,
-//   {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true
-//   }
-// );
-mongoose.connect("mongodb+srv://User:Esprit3A20@cluster0.5b0j5.mongodb.net/ACADEMIE?retryWrites=true&w=majority",
+mongoose.connect(`mongodb://${config.db_url}:${config.db_port}/${config.db_name}`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
   }
 );
+// mongoose.connect("mongodb+srv://User:Esprit3A20@cluster0.5b0j5.mongodb.net/ACADEMIE?retryWrites=true&w=majority",
+//   {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true
+//   }
+// );
 
 
 app.set('views', path.join(__dirname, 'views'));

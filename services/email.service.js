@@ -4,10 +4,12 @@ const User = require('../models/user.model');
 const creds = require('../config/config');
 const ejs = require('ejs');
 
+
 const auth = {
     user: creds.mail_address,
     pass: creds.mail_pwd
 };
+
 /*console.log("auth", auth)*/
 const transport = {
     host: 'smtp.gmail.com',

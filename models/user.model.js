@@ -7,26 +7,27 @@ const Positions = Object.freeze({
     DefenseurGauche: 'Défenseur Gauche',
     DefenseurLateralGauche: 'Défenseur Latéral Gauche',
     DefenseurDroit: 'Défenseur Droit',
-    DefenseurLateralDroit :'Défenseur Latéral Droit',
-    MilieuDefensifCentral :'Milieu Défensif Central',
-    MilieuCentre:'Milieu centre',
-    MilieuOffensifCentral:'Milieu offensif central',
-    MilieuGauche:'Milieu gauche',
-    AilierGauche:'Ailier gauche', 
-    MilieuDroit :'Milieu droit',
-    AilierDroit :'Ailier droit',
-    Attaquant :'Attaquant',
-    AvantCentreGauche :'Avant Centre gauche',
-    AvantCentreDroit: 'Avant Ccentre droit' 
-  });
-  const Roles = Object.freeze({
+    DefenseurLateralDroit: 'Défenseur Latéral Droit',
+    MilieuDefensifCentral: 'Milieu Défensif Central',
+    MilieuCentre: 'Milieu centre',
+    MilieuOffensifCentral: 'Milieu offensif central',
+    MilieuGauche: 'Milieu gauche',
+    AilierGauche: 'Ailier gauche',
+    MilieuDroit: 'Milieu droit',
+    AilierDroit: 'Ailier droit',
+    Attaquant: 'Attaquant',
+    AvantCentreGauche: 'Avant Centre gauche',
+    AvantCentreDroit: 'Avant Ccentre droit'
+});
+const Roles = Object.freeze({
     Proprietaire: 'proprietaire',
     Coach: 'coach',
     Joueur: 'joueur',
-  });
+    Admin: "admin"
+});
 const userSchema = new Schema({
     email: {
-        type: String,   
+        type: String,
         required: true,
         lowercase: true,
         unique: true
@@ -42,110 +43,110 @@ const userSchema = new Schema({
         picture: {
             type: String
         },
-        gender:{
-            type :String,
-            default : 'Male'
+        gender: {
+            type: String,
+            default: 'Male'
         },
-        telephone : {
+        telephone: {
             type: String
         },
         address: {
             type: String
         },
-        dateOfBirth:{
+        dateOfBirth: {
             type: Date
         },
-        height:{
+        height: {
             type: Number
         },
-        weight:{
-            type:Number
+        weight: {
+            type: Number
         },
-        preferedFoot:{
+        preferedFoot: {
             type: String
         },
         position: {
-            label:{
+            label: {
                 type: String,
                 enum: Object.values(Positions),
-    
+
             },
-            abbreviation:{
+            abbreviation: {
                 type: String
             }
-    
+
         },
-        description :{
+        description: {
             type: String
         },
         rating: {
             type: Number,
         },
-        attributeDetails:{
-            pace:{
-                value:{
-                    type:Number
+        attributeDetails: {
+            pace: {
+                value: {
+                    type: Number
                 },
-                acceleration:{ type:Number},
-                sprintSpeed:{ type:Number}
+                acceleration: { type: Number },
+                sprintSpeed: { type: Number }
             },
-            shooting:{
-                value:{
-                    type:Number
+            shooting: {
+                value: {
+                    type: Number
                 },
-                attPosition:{type:Number},
-                finishing:{type:Number},
-                shotPower:{type:Number},
-                longShots:{type:Number},
-                volleys:{type:Number},
-                penalties:{type:Number}
+                attPosition: { type: Number },
+                finishing: { type: Number },
+                shotPower: { type: Number },
+                longShots: { type: Number },
+                volleys: { type: Number },
+                penalties: { type: Number }
             },
-            passing:{
-                value:{
-                    type:Number
+            passing: {
+                value: {
+                    type: Number
                 },
-                vision:{type:Number},
-                crossing:{type:Number},
-                fkAcc:{type:Number},
-                shortPass:{type:Number},
-                longPass:{type:Number},
-                curve:{type:Number}
+                vision: { type: Number },
+                crossing: { type: Number },
+                fkAcc: { type: Number },
+                shortPass: { type: Number },
+                longPass: { type: Number },
+                curve: { type: Number }
             },
-            dribbling:{
-                value:{
-                    type:Number
+            dribbling: {
+                value: {
+                    type: Number
                 },
-                agility:{type:Number},
-                balance:{type:Number},
-                reactions:{type:Number},
-                ballControl:{type:Number},
-                dribbling:{type:Number},
-                composure:{type:Number}
+                agility: { type: Number },
+                balance: { type: Number },
+                reactions: { type: Number },
+                ballControl: { type: Number },
+                dribbling: { type: Number },
+                composure: { type: Number }
             },
-            defending:{
-                value:{
-                    type:Number
+            defending: {
+                value: {
+                    type: Number
                 },
-                interceptions:{type:Number},
-                headingAcc:{type:Number},
-                defAware:{type:Number},
-                standTackle:{type:Number},
-                slideTackle:{type:Number}
+                interceptions: { type: Number },
+                headingAcc: { type: Number },
+                defAware: { type: Number },
+                standTackle: { type: Number },
+                slideTackle: { type: Number }
             },
-            physical:{
-                value:{
-                    type:Number
+            physical: {
+                value: {
+                    type: Number
                 },
-                jumping:{type:Number},
-                stamina:{type:Number},
-                strength:{type:Number},
-                aggression:{type:Number}
+                jumping: { type: Number },
+                stamina: { type: Number },
+                strength: { type: Number },
+                aggression: { type: Number }
             }
         },
-        kitNumber:{
-            type:Number
+        kitNumber: {
+            type: Number
         },
-        rating:{
+        rating: {
             type: Number
         }
     },
@@ -173,34 +174,38 @@ const userSchema = new Schema({
         required: true,
         default: Date.now
     },
-    note:{
+    note: {
         type: String
     }
 }, {
     timestamps: true
 });
 
-userSchema.pre('save', async function(next){
+userSchema.pre('save', async function (next) {
+    console.log("pre saving !");
     try {
         //the user schema is instantiated
         const user = this;
+        console.log(user);
         //check if the user has been modified to know if the password has already been hashed
         if (!user.isModified('password')) {
-          next();
+            next();
         }
+        console.log("modified password");
         // Generate a salt
         const salt = await bcrypt.genSalt(12);
         // Generate a password hash (salt + hash)
         const passwordHash = await bcrypt.hash(this.password, salt);
         // Re-assign hashed version over original, plain text password
         this.password = passwordHash;
+        console.log("pass is", this.password);
         next();
-      } catch (error) {
+    } catch (error) {
         next(error);
-      }
+    }
 });
 
-userSchema.methods.isValidPassword = async function(password) {
+userSchema.methods.isValidPassword = async function (password) {
     try {
         return await bcrypt.compare(password, this.password);
     } catch (error) {
@@ -209,7 +214,7 @@ userSchema.methods.isValidPassword = async function(password) {
 }
 Object.assign(userSchema.statics, {
     Roles,
-  });
+});
 
 //create Model
 const User = mongoose.model('user', userSchema);

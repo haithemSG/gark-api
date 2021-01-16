@@ -22,9 +22,26 @@ const matchSchema = mongoose.Schema({
     description: {
         type: String
     },
+    type: {
+        type: mongoose.Types.ObjectId,
+        ref: 'event'
+    }
 }, {
     timestamps: true
 });
 
+const eventSchema = mongoose.Schema({
+    label: {
+        type: String
+    },
+    officiel: {
+        type: Boolean
+    }
+});
+
+
+
 const Match = mongoose.model('match', matchSchema);
-module.exports = Match;
+const Event = mongoose.model('event', eventSchema);
+
+module.exports = {Match , Event};

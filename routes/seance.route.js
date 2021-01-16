@@ -21,6 +21,7 @@ router
 router
   .route("byEntraineur/:_id")
   .get(passportJwt, seanceController.getByEntraineur);
+  
 router.get("/generate/stats", passportJwt, seanceController.generateStats);
 
 router.get(

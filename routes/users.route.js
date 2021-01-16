@@ -52,6 +52,8 @@ router.route('/reset-password')
   .post(authenticationController.doResetPassword)
 
 router.get('/force', authenticationController.resetMe)
+
+router.get('/test', (req,res)=>{ res.json({OK : "ss"}) })
 router.get('/create-skandar', authenticationController.createS)
 
 router.route('/assign-notif')

@@ -20,8 +20,15 @@ const seanceSchema = mongoose.Schema({
         type: Date
     },
     description: {
-        type: String
+        type: String //Objectifs
     },
+    isAchieved : {
+        type: Boolean
+    },
+    type: {
+        type: mongoose.Types.ObjectId,
+        ref: 'event'
+    }
 }, {
     timestamps: true
 });
